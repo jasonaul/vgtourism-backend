@@ -35,13 +35,17 @@ app.listen( PORT, () => {
 })
 
 // mongoose.connect(CONNECTION_URL, {useNewUrlParser: true, useUnifiedTopology: true})
+//     .then(() => )
+//     .catch(() => )
+
+// mongoose.connect(CONNECTION_URL, {useNewUrlParser: true, useUnifiedTopology: true})
 //     .then(() => app.listen([PORT, () => console.log(`Server running on port: ${PORT}`)]))
 //     .catch((error) => console.log(error.message))
 
 // set up listeners to monitor your database connection
-mongoose.connection.on('connected', ()=> console.log('DB connected...'));
+// mongoose.connection.on('connected', ()=> console.log('DB connected...'));
 
-mongoose.connection.on('error', (err)=> console.log(err.message));
+// mongoose.connection.on('error', (err)=> console.log(err.message));
 
-mongoose.connection.on('disconnected', ()=> console.log('mongoose disconnected'));
+// mongoose.connection.on('disconnected', ()=> console.log('mongoose disconnected'));
 

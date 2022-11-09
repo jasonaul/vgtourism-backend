@@ -1,6 +1,8 @@
 import express from 'express';
 
-import {getPosts} from '../controllers/posts.js'
+import {getDestination, createDestination} from '../controllers/posts.js'
+
+const app = express()
 
 const router = express.Router();
 
@@ -8,6 +10,7 @@ const router = express.Router();
 //     res.send('This works...?');
 // });
 
-router.get('/', getPosts);
+router.get('/', getDestination);
+router.post('/', createDestination);
 
 export default router;

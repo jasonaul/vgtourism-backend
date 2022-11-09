@@ -94,3 +94,7 @@ const destinationsSchema = mongoose.Schema({
         required: false
     },
 });
+
+const Destinations = mongoose.model('Destinations', destinationsSchema)
+
+export default Destinations;
