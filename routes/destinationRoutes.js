@@ -1,30 +1,21 @@
 import express from 'express';
 
-import {getDestination, createDestination} from '../controllers/posts.js'
-
 const app = express()
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-    res.status(200).json({message: 'Get destinations'})
-})
+import {getDestinations, createDestination, updateDestination, deleteDestination} from '../controllers/destinationController.js'
 
-router.post('/', (req, res) => {
-    res.status(200).json({message: 'Create destinations'})
-})
+router.route('/').get(getDestinations).post(createDestination)
+    // The above line replaces the two below
+    // router.get('/', getDestinations)
+    // router.post('/', createDestination)
 
-router.put('/:id', (req, res) => {
-    res.status(200).json({message: `Update destination ${req.params.id}`})
-})
-
-router.delete('/:id', (req, res) => {
-    res.status(200).json({message: `Delete destination ${req.params.id}`})
-})
+router.route('/:id').delete(deleteDestination).put(updateDestination)
+    // The above line replaces the two below
+    // router.put('/:id', updateDestination)
+    // router.delete('/:id', deleteDestination)
 
 
-
-// router.get('/', getDestination);
-router.post('/', createDestination);
 
 export default router;
