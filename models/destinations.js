@@ -10,7 +10,7 @@ const destinationsSchema = mongoose.Schema({
         required: true
     },
     console: {
-        type: String,
+        type: Array,
         required: true
     },
     releaseyear: {

@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import colors from 'colors'
 
 import dotenv from 'dotenv';
 dotenv.config()
@@ -11,6 +12,10 @@ import errorHandler from './middleware/errorMiddleware.js'
 import router from './routes/destinationRoutes.js';
 
 
+//Database Connections
+import connectDB from './config/db.js'
+connectDB()
+//-----//
 
 const app = express();
 
