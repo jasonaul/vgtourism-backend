@@ -59,9 +59,19 @@ export const updateDestination = (req, res) => {
 // Description: Get destinations (pre-authentication)
 // @route DELETE /api/destinations/:id
 // @access Public
-export const deleteDestination = asyncHandler(async (req, res) => {
-    res.status(200).json({message: `Delete destination ${req.params.id}`})
-})
+// export const deleteDestination = asyncHandler(async (req, res) => {
+//     res.status(200).json({message: `Delete destination ${req.params.id}`})
+// })
+
+export const deleteDestination = (req, res) => {
+    Destinations.findByIdAndDelete(req.params.id, (error, deletedDestination) => {
+      if(!deletedDestination) return res.status(400).json({error: "Destination not found"})
+      if(error) return res.status(400).json({error: error.message})
+      return res.status(200).json({
+        message: `Destination ${deletedDestination} deleted succesfully.`
+      })
+    });
+  };
 
 
 // export const getDestination = (req, res) => {
