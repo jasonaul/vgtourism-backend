@@ -2,8 +2,11 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import cors from 'cors';
+
 import dotenv from 'dotenv';
 dotenv.config()
+
+import errorHandler from './middleware/errorMiddleware.js'
 
 import router from './routes/destinationRoutes.js';
 
@@ -11,14 +14,17 @@ import router from './routes/destinationRoutes.js';
 
 const app = express();
 
-
+app.use(express.json())
+app.use(express.urlencoded({extended: false}))
 
 app.use('/api/destinations', router);
     // Every route within the posts routes will start with posts
 
-app.use(bodyParser.json({limit: "50mb", extended: true}));
-app.use(bodyParser.urlencoded({limit: "50mb", extended: true}));
-app.use(cors());
+app.use(errorHandler)
+
+// app.use(bodyParser.json({limit: "50mb", extended: true}));
+// app.use(bodyParser.urlencoded({limit: "50mb", extended: true}));
+// app.use(cors());
 
 // const mongoose = require('mongoose');
 // mongoose.connect(connectionStr);
