@@ -1,5 +1,6 @@
 import Destinations from '../models/destinations.js'
 import asyncHandler from 'express-async-handler'
+import Users from '../models/users.js'
 
 // Description: Get destinations (pre-authentication)
 // @route GET /api/destinations
@@ -24,12 +25,12 @@ export const getDestinations = asyncHandler(async (req, res) => {
 // })
 
 export const createDestination = (req, res) => {
-    Destinations.create(req.body, (err, createdDestination) => {
+    Destinations.create(req.body, req.user.id, (err, createdDestination) => {
         if(err) return res.status(404).json({error: err.message})
         return res.status(200).json(createdDestination)
     })
 }
-
+// NOTE: Late in this process, we added 'req.user.id' in the Destinations.create field above. This makes it so this route can only be hit if a user is logged in. If it starts causing issues, req.user.id is likely the problem.
 
 // Description: Update destinations (pre-authentication)
 // @route PUT /api/destinations/:id
@@ -43,6 +44,18 @@ export const createDestination = (req, res) => {
 // })
 
 export const updateDestination = (req, res) => {
+    const user = Users.findById(req.user.id) // We added this during authentication process, may remove if causing issues.
+        //Checeking for user below
+    if(!user) {
+        res.status(401)
+        throw new Error('User not found')
+    }
+            // Make sure the logged in user matches the goal user.
+    if(Destinations.user.toString() !== user.id) {
+        res.status(401)
+        throw new Error("User not authorized.")
+    }
+        //Checking above for user
     Destinations.findByIdAndUpdate(
       req.params.id, 
       {
@@ -56,6 +69,8 @@ export const updateDestination = (req, res) => {
     });
   };
 
+  
+
 // Description: Get destinations (pre-authentication)
 // @route DELETE /api/destinations/:id
 // @access Public
@@ -64,6 +79,18 @@ export const updateDestination = (req, res) => {
 // })
 
 export const deleteDestination = (req, res) => {
+    const user = Users.findById(req.user.id) // We added this during authentication process, may remove if causing issues.
+        //Checeking for user below
+    if(!user) {
+        res.status(401)
+        throw new Error('User not found')
+    }
+            // Make sure the logged in user matches the goal user.
+    if(Destinations.user.toString() !== user.id) {
+        res.status(401)
+        throw new Error("User not authorized.")
+    }
+        //Checking above for user
     Destinations.findByIdAndDelete(req.params.id, (error, deletedDestination) => {
       if(!deletedDestination) return res.status(400).json({error: "Destination not found"})
       if(error) return res.status(400).json({error: error.message})
