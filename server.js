@@ -10,12 +10,13 @@ dotenv.config()
 import errorHandler from './middleware/errorMiddleware.js'
 
 import router from './routes/destinationRoutes.js';
-
+import routerUser from './routes/userRoutes.js'
 
 //Database Connections
 import connectDB from './config/db.js'
 connectDB()
 //-----//
+
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(express.urlencoded({extended: false}))
 
 app.use('/api/destinations', router);
     // Every route within the posts routes will start with posts
+app.use('/api/users', routerUser);
 
 app.use(errorHandler)
 
