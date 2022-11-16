@@ -79,13 +79,15 @@ const loginUser = asyncHandler(async(req, res) => {
 // @access Private
 const getUser = asyncHandler(async(req, res) => {
     // res.json({message: "User data retrieved and displayed"})
-    const {_id, name, email} = await Users.findById(req.user.id)
+    // const {_id, name, email} = await Users.findById(req.user.id) // don't really need this, since we got the user from the middleware, but leaving it in shouldn't cause any issues...
 
-    res.status(200).json({
-        id: _id,
-        name,
-        email
-    })
+    res.status(200).json(req.user)
+
+    // res.status(200).json({
+    //     id: _id,
+    //     name,
+    //     email
+    // }) // not needed currently
 })
 
 // Generate JWT
