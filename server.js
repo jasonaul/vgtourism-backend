@@ -1,6 +1,6 @@
-import express from 'express';
+import express, { application } from 'express';
 import bodyParser from 'body-parser';
-
+import HttpError from './models/http-error.js';
 
 //**  Middleware  **//
 import routerDestination from './routes/destinationRoutes.js'
@@ -25,9 +25,14 @@ import connectDB from './config/db.js'
 const app = express();
 
 
-
+app.use(bodyParser.json());
 
 app.use('/api/destinations', routerDestination)
+
+app.use((req, res, next) => {
+    const error = new HttpError('You cannot progress any further.', 404);
+    throw error;
+});
 
 app.use((error, req, res, next) => {
     if (res.headerSent) {

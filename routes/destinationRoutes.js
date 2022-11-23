@@ -1,5 +1,5 @@
 import express from 'express';
-import { getDestByID, getDestByUser } from '../controllers/destinationController.js';
+import { createDestination, getDestByID, getDestByUser, updateDestination, deleteDestination } from '../controllers/destinationController.js';
 import protect from '../middleware/authMiddleware.js'
 // import {getDestinations, createDestination, updateDestination, deleteDestination} from '../controllers/destinationController.js'
 const app = express()
@@ -12,7 +12,13 @@ const routerDestination = express.Router();
 
 routerDestination.get('/:destID', getDestByID);
 
-routerDestination.get('/users/:userID', getDestByUser) 
+routerDestination.get('/user/:userID', getDestByUser) 
+
+routerDestination.post('/', createDestination)
+
+routerDestination.patch('/:destID', updateDestination ); 
+
+routerDestination.delete('/:destID', deleteDestination ); 
 
 // routerDestination.get('/gameseries/mario'), (req, res, next) => {
 //     const mario = req.params.series;

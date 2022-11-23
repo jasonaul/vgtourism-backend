@@ -1,4 +1,5 @@
 import HttpError from '../models/http-error.js'
+import { v4 as uuidv4 } from 'uuid'
 import Destinations from '../models/destinations.js'
 import asyncHandler from 'express-async-handler'
 import Users from '../models/users.js'
@@ -89,10 +90,10 @@ const DUMMY_DESTINATIONS = [
 
 
 export const getDestByID = (req, res, next) => {
-    const userID = req.params.userID;
+    const destID = req.params.destID;
 
     const destination = DUMMY_DESTINATIONS.find(d => {
-        return d.creator === userID;
+        return d.id === destID;
     });
 
     if (!destination) {
@@ -103,9 +104,9 @@ export const getDestByID = (req, res, next) => {
 }
 
 export const getDestByUser = (req, res, next) => {
-    const destID = req.params.destID;
+    const userID = req.params.userID;
     const destination = DUMMY_DESTINATIONS.find(d => {
-        return d.id === destID
+        return d.creator === userID;
     });
 
     if (!destination){
@@ -115,12 +116,61 @@ export const getDestByUser = (req, res, next) => {
        
        )
     }
-
-    
+    res.json({destination})
 }
 
+export const createDestination = (req, res, next) => {
+    const { destinationName, experience, series, game, console, releaseyear, city, state, country, continent, coordinates,  headline, description1, description2, description3, image1, image2, image3, ingameimg1, ingameimg2, ingameimg3, creator } = req.body;
+
+    const createdDestination = {
+        id: uuidv4(),
+        destinationName,
+        experience,
+        series, 
+        game,
+        console,
+        coordinates,
+        releaseyear,
+        city,
+        state,
+        country,
+        continent,
+        headline,
+        description1,
+        description2,
+        description3,
+        image1,
+        image2,
+        image3,
+        ingameimg1, 
+        ingameimg2,
+        ingameimg3,
+        creator
+    };
+
+    DUMMY_DESTINATIONS.push(createdDestination);
+
+    res.status(201).json({destination: createdDestination})
+};
 
 
+export const updateDestination = (req, res, next) => {
+  const { destinationName, experience, releaseyear, city, state, country, continent, coordinates,  headline, description1, description2, description3, image1, image2, image3, ingameimg1, ingameimg2, ingameimg3 } = req.body;
+
+  const destID = req.params.destID
+
+  const updatedDestination = {...DUMMY_DESTINATIONS.find(d => d.id === destID)};
+  
+  const destinationIndex = DUMMY_DESTINATIONS.findIndex(d => d.id === destID);
+  updatedDestination.destinationName = destinationName
+  updatedDestination.headline = headline
+  
+  DUMMY_DESTINATIONS[destinationIndex] = updatedDestination;
+
+  res.status(200).json({destination: updatedDestination})
+};
+
+export const deleteDestination = (req, res, next) => {};
 
 
 
