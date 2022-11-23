@@ -73,19 +73,19 @@ let DUMMY_DESTINATIONS = [
         ingameimg2: 'https://preview.redd.it/v6gfeuoz3ou51.jpg?width=960&crop=smart&auto=webp&s=6f3539668a3fc55bcd9fffb228256780308e3230',
         ingameimg3: 'https://preview.redd.it/v6gfeuoz3ou51.jpg?width=960&crop=smart&auto=webp&s=6f3539668a3fc55bcd9fffb228256780308e3230',
     },
-    // {
-    //     id: 'd5',
-    //     destinationName: 'Ezio\'s Playhouse',
-    //     description: 'A really famous building.',
-    //     series: 'mario',
-    //     image: 'https://workleavebalance.files.wordpress.com/2014/07/dscf0725.jpg',
-    //     address: 'Florence, Italy',
-    //     coordinates: {
-    //         lat: 40.7484405,
-    //         lng: -73.9878584
-    //     },
-    //     creator: 'u1'
-    // },
+    {
+        id: 'd5',
+        destinationName: 'Ezio\'s Playhouse',
+        description: 'A really famous building.',
+        series: 'Mario',
+        image: 'https://workleavebalance.files.wordpress.com/2014/07/dscf0725.jpg',
+        address: 'Florence, Italy',
+        coordinates: {
+            lat: 40.7484405,
+            lng: -73.9878584
+        },
+        creator: 'u1'
+    },
 ]
 
 
@@ -105,18 +105,34 @@ export const getDestByID = (req, res, next) => {
 
 export const getDestByUser = (req, res, next) => {
     const userID = req.params.userID;
-    const destination = DUMMY_DESTINATIONS.find(d => {
+    const destinations = DUMMY_DESTINATIONS.filter(d => {
         return d.creator === userID;
     });
 
-    if (!destination){
+    if (!destinations || destinations.length === 0){
         
         return next(
             new HttpError('I am error...userID', 404)
        
        )
     }
-    res.json({destination})
+    res.json({destinations})
+}
+
+export const getBySeries = (req, res, next) => {
+    const series = req.params.series;
+    const gameSeries = DUMMY_DESTINATIONS.filter(d => {
+        return d.series === series;
+    });
+
+    if (!gameSeries || gameSeries.length === 0){
+        
+        return next(
+            new HttpError('I am error...userID', 404)
+       
+       )
+    }
+    res.json({gameSeries})
 }
 
 export const createDestination = (req, res, next) => {

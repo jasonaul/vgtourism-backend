@@ -1,5 +1,5 @@
 import express from 'express';
-import { createDestination, getDestByID, getDestByUser, updateDestination, deleteDestination } from '../controllers/destinationController.js';
+import { createDestination, getDestByID, getDestByUser, updateDestination, deleteDestination, getBySeries } from '../controllers/destinationController.js';
 import protect from '../middleware/authMiddleware.js'
 // import {getDestinations, createDestination, updateDestination, deleteDestination} from '../controllers/destinationController.js'
 const app = express()
@@ -13,6 +13,8 @@ const routerDestination = express.Router();
 routerDestination.get('/:destID', getDestByID);
 
 routerDestination.get('/user/:userID', getDestByUser) 
+
+routerDestination.get('/series/:series', getBySeries)
 
 routerDestination.post('/', createDestination)
 
