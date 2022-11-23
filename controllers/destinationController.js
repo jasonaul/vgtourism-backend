@@ -5,7 +5,7 @@ import asyncHandler from 'express-async-handler'
 import Users from '../models/users.js'
 
 
-const DUMMY_DESTINATIONS = [
+let DUMMY_DESTINATIONS = [
     {
         id: 'd1',
         destinationName: 'Ezio\'s Playhouse',
@@ -170,7 +170,11 @@ export const updateDestination = (req, res, next) => {
   res.status(200).json({destination: updatedDestination})
 };
 
-export const deleteDestination = (req, res, next) => {};
+export const deleteDestination = (req, res, next) => {
+    const destID = req.params.destID
+    DUMMY_DESTINATIONS = DUMMY_DESTINATIONS.filter(d => d.id !== destID);
+    res.status(200).json({message: 'Destination has been deleted!'})
+};
 
 
 
