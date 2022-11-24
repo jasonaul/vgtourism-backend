@@ -1,7 +1,7 @@
 import HttpError from '../models/http-error.js'
 import { v4 as uuidv4 } from 'uuid'
 import { validationResult } from 'express-validator'
-// import Destinations from '../models/destinations.js'
+import Destinations from '../models/destinations.js'
 // import asyncHandler from 'express-async-handler'
 // import Users from '../models/users.js'
 
@@ -90,25 +90,46 @@ let DUMMY_DESTINATIONS = [
 ]
 
 
-export const getDestByID = (req, res, next) => {
+export const getDestByID = async (req, res, next) => {
     const destID = req.params.destID;
+    let destination;
+    try {
+        destination = await Destinations.findById(destID);
 
-    const destination = DUMMY_DESTINATIONS.find(d => {
-        return d.id === destID;
-    });
+    } catch (err) {
+        const error = new HttpError("Hmm, we couldn't find the destination you are looking for. Try again!", 500);
+
+        return next(error);
+    }
+    
+    // DUMMY_DESTINATIONS.find(d => {
+    //     return d.id === destID;
+    // });
+        //Use above for any dev purpose
 
     if (!destination) {
-        throw new HttpError('I am error.', 404);
+        const error = new HttpError('I am error.', 404);
+        return next(error)
          }
 
-    res.json({destination})
+    res.json({destination: destination.toObject( {getters: true} ) })
 }
 
-export const getDestByUser = (req, res, next) => {
+export const getDestByUser = async (req, res, next) => {
     const userID = req.params.userID;
-    const destinations = DUMMY_DESTINATIONS.filter(d => {
-        return d.creator === userID;
-    });
+    let destinations
+    try {
+         destinations = await Destinations.find ({ creator: userID});
+
+    } catch (err) {
+        const error = new HttpError("Cannot find the user/destination you are looking for.", 500);
+        return next(error)
+    }
+    
+    // DUMMY_DESTINATIONS.filter(d => {
+    //     return d.creator === userID;
+    // });
+        //Use for dev purposes.
 
     if (!destinations || destinations.length === 0){
         
@@ -117,7 +138,7 @@ export const getDestByUser = (req, res, next) => {
        
        )
     }
-    res.json({destinations})
+    res.json({destinations: destinations.map(destinations => destinations.toObject({getters:true}))})
 }
 
 export const getBySeries = (req, res, next) => {
@@ -136,7 +157,7 @@ export const getBySeries = (req, res, next) => {
     res.json({gameSeries})
 }
 
-export const createDestination = (req, res, next) => {
+export const createDestination = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         throw new HttpError('Several fields required. Please check your data.', 422)
@@ -144,8 +165,7 @@ export const createDestination = (req, res, next) => {
 
     const { destinationName, experience, series, game, console, releaseyear, city, state, country, continent, coordinates,  headline, description1, description2, description3, image1, image2, image3, ingameimg1, ingameimg2, ingameimg3, creator } = req.body;
 
-    const createdDestination = {
-        id: uuidv4(),
+    const createdDestination = new Destinations ({
         destinationName,
         experience,
         series, 
@@ -168,40 +188,126 @@ export const createDestination = (req, res, next) => {
         ingameimg2,
         ingameimg3,
         creator
-    };
+    });
+    
+    // {
+    //     id: uuidv4(),
+    //     destinationName,
+    //     experience,
+    //     series, 
+    //     game,
+    //     console,
+    //     coordinates,
+    //     releaseyear,
+    //     city,
+    //     state,
+    //     country,
+    //     continent,
+    //     headline,
+    //     description1,
+    //     description2,
+    //     description3,
+    //     image1,
+    //     image2,
+    //     image3,
+    //     ingameimg1, 
+    //     ingameimg2,
+    //     ingameimg3,
+    //     creator
+    // };
 
-    DUMMY_DESTINATIONS.push(createdDestination);
+    try {
+        await createdDestination.save();
+      } catch (err) {
+          const error = new HttpError(
+          "Creating a destination has failed, please try again.",
+          500
+        );
+        return next(error);
+      }
+    
+
+    // DUMMY_DESTINATIONS.push(createdDestination);
+        // Only need in dev mode.
 
     res.status(201).json({destination: createdDestination})
 };
 
 
-export const updateDestination = (req, res, next) => {
+export const updateDestination = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         throw new HttpError('Several fields required for you to update. Please check your data.', 422)
     }
 
-  const { destinationName, experience, releaseyear, city, state, country, continent, coordinates,  headline, description1, description2, description3, image1, image2, image3, ingameimg1, ingameimg2, ingameimg3 } = req.body;
-
+  const { destinationName, headline, game} = req.body;
   const destID = req.params.destID
 
-  const updatedDestination = {...DUMMY_DESTINATIONS.find(d => d.id === destID)};
-  
-  const destinationIndex = DUMMY_DESTINATIONS.findIndex(d => d.id === destID);
-  updatedDestination.destinationName = destinationName
-  updatedDestination.headline = headline
-  
-  DUMMY_DESTINATIONS[destinationIndex] = updatedDestination;
+//   const destID = req.params.destID
+//   const updatedDestination = {...DUMMY_DESTINATIONS.find(d => d.id === destID)};  
+//   const destinationIndex = DUMMY_DESTINATIONS.findIndex(d => d.id === destID);
+    //Save for developer purposes. Just in case.
 
-  res.status(200).json({destination: updatedDestination})
+let destination;
+try {
+    destination = await Destinations.findById(destID)
+} catch (err) {
+    const error = new HttpError("Updating went haywire. Please try again.", 500);
+    return next(error);
+    
+}
+
+
+destination.destinationName = destinationName
+destination.headline = headline
+destination.game = game
+
+try {
+    await destination.save();
+} catch (err) {
+    const error = new HttpError("Something not-good happened. Couldn't update the destination. Please try again.", 500);
+    return next(error)
+}
+  
+//   DUMMY_DESTINATIONS[destinationIndex] = updatedDestination;
+    //Saving dummy options for any debugging that may be needed.
+
+  res.status(200).json({destination: destination.toObject({getters: true})})
 };
 
-export const deleteDestination = (req, res, next) => {
+export const deleteDestination = async (req, res, next) => {
     const destID = req.params.destID
-    DUMMY_DESTINATIONS = DUMMY_DESTINATIONS.filter(d => d.id !== destID);
-    res.status(200).json({message: 'Destination has been deleted!'})
+
+    let destination;
+    try {
+        destination = await Destinations.findById(destID);
+    } catch (err) {
+        const error = new HttpError("Deleting didn't work for some reason. Try again.", 500)
+        return next(error);
+    }
+
+    try {
+        await destination.remove();
+    } catch (err) {
+        const error = new HttpError("Deleting didn't work for some reason. Try again.", 500)
+        return next(error);
+    }
+
+    // DUMMY_DESTINATIONS = DUMMY_DESTINATIONS.filter(d => d.id !== destID);
+        // Saving dummy code for debugging.
+
+    res.status(200).json({message: 'Destination Deleted!'})
 };
+
+
+
+
+
+
+
+
+
+
 
 
 

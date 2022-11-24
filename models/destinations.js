@@ -10,7 +10,7 @@ const destinationsSchema = mongoose.Schema({
         required: true
     },
     console: {
-        type: Array,
+        type: String,
         required: false
     },
     releaseyear: {
@@ -22,7 +22,7 @@ const destinationsSchema = mongoose.Schema({
         required: true
     },
     experience: {
-        type: Boolean,
+        type: String,
         required: false
     },
     city: {
@@ -56,7 +56,7 @@ const destinationsSchema = mongoose.Schema({
         required: false
     },
     longitude: {
-        type: String,
+        type: Number,
         required: false
     },
     externalSite: {
