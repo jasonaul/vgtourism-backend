@@ -1,3 +1,4 @@
+//** General Use Imports **//
 import express, { application } from 'express';
 import bodyParser from 'body-parser';
 import HttpError from './models/http-error.js';
@@ -6,12 +7,14 @@ import HttpError from './models/http-error.js';
 import routerDestination from './routes/destinationRoutes.js'
 import routerUser from './routes/userRoutes.js';
 
+//** Database  **/
 import mongoose from 'mongoose';
+
 import cors from 'cors';
 import colors from 'colors'
 
-// import dotenv from 'dotenv';
-// dotenv.config()
+import dotenv from 'dotenv';
+dotenv.config()
 
 import errorHandler from './middleware/errorMiddleware.js'
 
@@ -44,7 +47,17 @@ app.use((error, req, res, next) => {
 });
 
 
-app.listen(8080);
+mongoose
+    .connect(process.env.MONGO_URI)
+    .then(() => {
+        app.listen(8080);
+    })
+    .catch(err => {
+        console.log(err);
+    });
+
+
+
 
 
 

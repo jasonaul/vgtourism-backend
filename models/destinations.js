@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const destinationsSchema = mongoose.Schema({
     series: {
         type: String,
-        required: true
+        required: false
     },
     game: {
         type: String,
@@ -11,11 +11,11 @@ const destinationsSchema = mongoose.Schema({
     },
     console: {
         type: Array,
-        required: true
+        required: false
     },
     releaseyear: {
         type: Number,
-        required: true
+        required: false
     },
     destinationName: {
         type: String,
@@ -40,6 +40,16 @@ const destinationsSchema = mongoose.Schema({
     continent: {
         type: String,
         required: false
+    },
+    coordinates: {
+        lat: {
+            type: Number,
+            required: false
+        },
+        lng: {
+            type: Number,
+            required: false
+        }
     },
     latitude: {
         type: Number,
@@ -93,6 +103,10 @@ const destinationsSchema = mongoose.Schema({
         type: String,
         required: false
     },
+    creator: {
+        type: String,
+        required: true
+    }
 });
 
 const Destinations = mongoose.model('Destinations', destinationsSchema)
