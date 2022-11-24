@@ -1,8 +1,9 @@
 import HttpError from '../models/http-error.js'
 import { v4 as uuidv4 } from 'uuid'
-import Destinations from '../models/destinations.js'
-import asyncHandler from 'express-async-handler'
-import Users from '../models/users.js'
+import { validationResult } from 'express-validator'
+// import Destinations from '../models/destinations.js'
+// import asyncHandler from 'express-async-handler'
+// import Users from '../models/users.js'
 
 
 let DUMMY_DESTINATIONS = [
@@ -136,6 +137,11 @@ export const getBySeries = (req, res, next) => {
 }
 
 export const createDestination = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        throw new HttpError('Several fields required. Please check your data.', 422)
+    }
+
     const { destinationName, experience, series, game, console, releaseyear, city, state, country, continent, coordinates,  headline, description1, description2, description3, image1, image2, image3, ingameimg1, ingameimg2, ingameimg3, creator } = req.body;
 
     const createdDestination = {
@@ -171,6 +177,11 @@ export const createDestination = (req, res, next) => {
 
 
 export const updateDestination = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        throw new HttpError('Several fields required for you to update. Please check your data.', 422)
+    }
+
   const { destinationName, experience, releaseyear, city, state, country, continent, coordinates,  headline, description1, description2, description3, image1, image2, image3, ingameimg1, ingameimg2, ingameimg3 } = req.body;
 
   const destID = req.params.destID

@@ -4,17 +4,18 @@ import HttpError from './models/http-error.js';
 
 //**  Middleware  **//
 import routerDestination from './routes/destinationRoutes.js'
+import routerUser from './routes/userRoutes.js';
 
 import mongoose from 'mongoose';
 import cors from 'cors';
 import colors from 'colors'
 
-import dotenv from 'dotenv';
-dotenv.config()
+// import dotenv from 'dotenv';
+// dotenv.config()
 
 import errorHandler from './middleware/errorMiddleware.js'
 
-import routerUser from './routes/userRoutes.js'
+
 
 //Database Connections
 import connectDB from './config/db.js'
@@ -28,6 +29,7 @@ const app = express();
 app.use(bodyParser.json());
 
 app.use('/api/destinations', routerDestination)
+app.use('/api/users', routerUser)
 
 app.use((req, res, next) => {
     const error = new HttpError('You cannot progress any further.', 404);

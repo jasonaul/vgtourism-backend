@@ -1,16 +1,34 @@
 import express from 'express';
-const routerUser = express.Router()
-import { registerUser, loginUser, getUser } from '../controllers/userController.js'
-import protect from '../middleware/authMiddleware.js'
+import { check } from 'express-validator'
+import { userFinder, registerUser, loginUser } from '../controllers/userController.js';
+// import protect from '../middleware/authMiddleware.js'
+// import {getDestinations, createDestination, updateDestination, deleteDestination} from '../controllers/destinationController.js'
+const app = express()
+
+const routerDestination = express.Router();
+
+routerDestination.get('/', userFinder);
+
+routerDestination.post('/register', 
+[
+    check('name')
+      .not()
+      .isEmpty(),
+    check('email')
+      .normalizeEmail() 
+      .isEmail(),
+    check('password').isLength({ min: 6 })
+  ], 
+  registerUser); 
+
+routerDestination.post('/login', loginUser )
 
 
-routerUser.post('/', registerUser)
-
-routerUser.post('/login', loginUser)
-
-routerUser.get('/userinfo', protect, getUser)
 
 
-// module.exports = routerUser
+export default routerDestination
+    //Exporting the 'router' constant.
 
-export default routerUser
+
+
+
