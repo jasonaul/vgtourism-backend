@@ -160,7 +160,9 @@ export const getBySeries = (req, res, next) => {
 export const createDestination = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        throw new HttpError('Several fields required. Please check your data.', 422)
+        return next(
+            new HttpError('Several fields required. Please check your data.', 422)
+        ) 
     }
 
     const { destinationName, experience, series, game, console, releaseyear, city, state, country, continent, coordinates,  headline, description1, description2, description3, image1, image2, image3, ingameimg1, ingameimg2, ingameimg3, creator } = req.body;
@@ -237,7 +239,9 @@ export const createDestination = async (req, res, next) => {
 export const updateDestination = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        throw new HttpError('Several fields required for you to update. Please check your data.', 422)
+        return next (
+            new HttpError('Several fields required for you to update. Please check your data.', 422)
+        ) 
     }
 
   const { destinationName, headline, game} = req.body;

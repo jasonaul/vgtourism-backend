@@ -1,3 +1,4 @@
+import Users from '../models/users.js'
 import HttpError from '../models/http-error.js'
 import { validationResult } from 'express-validator'
 import { v4 as uuidv4 } from 'uuid'
@@ -17,28 +18,57 @@ export const userFinder = (req, res, next) => {
     res.json({users: DUMMY_USERS})
 }
 
-export const registerUser = (req, res, next) => {
+export const registerUser = async (req, res, next) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
-        throw new HttpError("You must use a name (of your preference), an email address, and a password (minimum 7 characters).", 422)
-    }
-    const { name, email, password } = req.body;
+        return next(
+         new HttpError("You must use a name (of your preference), an email address, and a password (minimum 7 characters).", 422)
+    )}
+    const { name, email, password, destinations } = req.body;
 
-    const alreadyRegistered = DUMMY_USERS.find(u => u.email === email);
+    let alreadyRegistered
+    try {
+        alreadyRegistered = await Users.findOne({ email: email })
+    } catch (err) {
+        const error = new HttpError("An error occurred with registering. Please try again.", 500)
+        return next(error)
+    }
+
     if (alreadyRegistered) {
-        throw new HttpError("Cannot create new user - email already in use.", 422)
+        const error = new HttpError("A user with this email address already exists!", 422)
+        return next (error)
     }
 
-    const registeredUser = {
-        id: uuidv4(),
+    
+
+    // const alreadyRegistered = DUMMY_USERS.find(u => u.email === email);
+    // if (alreadyRegistered) {
+    //     throw new HttpError("Cannot create new user - email already in use.", 422)
+    // }
+        //Save for any debugging needs.
+
+    
+
+    const registeredUser = new Users ({
+   
         name,
         email,
-        password
-    };
+        password,
+        image: 'https://w7.pngwing.com/pngs/717/24/png-transparent-computer-icons-user-profile-user-account-avatar-heroes-silhouette-black-thumbnail.png',
+        destinations
+    });
 
-    DUMMY_USERS.push(registeredUser);
+    // DUMMY_USERS.push(registeredUser);
+        //Again for debugging away from database
 
-    res.status(201).json({user: registeredUser})
+    try {
+        await registeredUser.save();
+    } catch (err) {
+        const error = new HttpError("Something not-good happened. Couldn't register this user. Please try again.", 500);
+        return next(error)
+    }
+
+    res.status(201).json({user: registeredUser.toObject({ getterse: true })});
 };
 
 export const loginUser = (req, res, next) => {
