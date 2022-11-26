@@ -104,8 +104,9 @@ const destinationsSchema = mongoose.Schema({
         required: false
     },
     creator: {
-        type: String,
-        required: true
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: 'Users'
     }
 });
 

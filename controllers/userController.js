@@ -4,18 +4,30 @@ import { validationResult } from 'express-validator'
 import { v4 as uuidv4 } from 'uuid'
 
 
-const  DUMMY_USERS = [
-    {
-        id: 'u1',
-        name: 'Jason Aul',
-        email: 'test@test.com',
-        password: 'testers'
+// const  DUMMY_USERS = [
+//     {
+//         id: 'u1',
+//         name: 'Jason Aul',
+//         email: 'test@test.com',
+//         password: 'testers'
+//     }
+// ]
+
+
+export const userFinder = async (req, res, next) => {
+    // res.json({users: DUMMY_USERS})
+        //Saving in case needed for debugging.
+    let users
+    try {
+        users = await Users.find({
+
+        }, '-password')   
+    } catch (err) {
+        const error = new HttpError("Finding users failed. Please try again.", 500);
+        return next (error)
     }
-]
-
-
-export const userFinder = (req, res, next) => {
-    res.json({users: DUMMY_USERS})
+    res.json({users: users.map(user => user.toObject({getters:true})
+        )})
 }
 
 export const registerUser = async (req, res, next) => {
@@ -24,7 +36,7 @@ export const registerUser = async (req, res, next) => {
         return next(
          new HttpError("You must use a name (of your preference), an email address, and a password (minimum 7 characters).", 422)
     )}
-    const { name, email, password, destinations } = req.body;
+    const { name, email, password } = req.body;
 
     let alreadyRegistered
     try {
@@ -55,7 +67,7 @@ export const registerUser = async (req, res, next) => {
         email,
         password,
         image: 'https://w7.pngwing.com/pngs/717/24/png-transparent-computer-icons-user-profile-user-account-avatar-heroes-silhouette-black-thumbnail.png',
-        destinations
+        destinations: []
     });
 
     // DUMMY_USERS.push(registeredUser);
@@ -71,13 +83,31 @@ export const registerUser = async (req, res, next) => {
     res.status(201).json({user: registeredUser.toObject({ getterse: true })});
 };
 
-export const loginUser = (req, res, next) => {
+export const loginUser = async (req, res, next) => {
     const { email, password } = req.body;
-  
-    const foundUser = DUMMY_USERS.find(u => u.email === email);
-    if (!foundUser || foundUser.password !== password) {
-      throw new HttpError('Email or password is incorrect.', 401);
+
+    let alreadyRegistered
+    try {
+        alreadyRegistered = await Users.findOne({ email: email })
+    } catch (err) {
+        const error = new HttpError("An error occurred with logging in. Please try again.", 500)
+        return next(error)
     }
+
+    if (!alreadyRegistered || alreadyRegistered.password !== password) {
+        const error = new HttpError(
+            'Invalid email address or password.', 401
+        );
+        return next(error)
+    }
+  
+    // const foundUser = DUMMY_USERS.find(u => u.email === email);
+    // if (!foundUser || foundUser.password !== password) {
+    //   throw new HttpError('Email or password is incorrect.', 401);
+    // }
+        // Save for debugging.
+
+
   
     res.json({message: 'Logged in!'});
   };

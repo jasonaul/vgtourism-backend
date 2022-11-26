@@ -21,10 +21,12 @@ const userSchema = mongoose.Schema({
         type: String, 
         required: false
     },
-    destinations: {
-        type: String,
-        required: true
-    }
+    destinations: [{
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: 'Destinations'
+    }]
+
 
 },
 {
