@@ -14,7 +14,9 @@ routerDestination.get('/user/:userID', getDestByUser)
 
 routerDestination.get('/series/:series', getBySeries)
 
-routerDestination.post('/', 
+routerDestination.use(protect);
+
+routerDestination.post('/',  
 [
     check('destinationName').not().isEmpty(),
     check('headline').isLength({min: 10}),

@@ -4,6 +4,8 @@ import { validationResult } from 'express-validator'
 import { v4 as uuidv4 } from 'uuid'
 import mongoose from 'mongoose'
 import Destinations from '../models/destinations.js'
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
 
 
 
@@ -42,20 +44,25 @@ export const registerUser = async (req, res, next) => {
         return next (error)
     }
 
-    
-
     // const alreadyRegistered = DUMMY_USERS.find(u => u.email === email);
     // if (alreadyRegistered) {
     //     throw new HttpError("Cannot create new user - email already in use.", 422)
     // }
         //Save for any debugging needs.
+    let hashedPassword;
 
-    
+    try {
+        hashedPassword = await bcrypt.hash(password, 12);
+
+    } catch (err) {
+        const error = new HttpError('Could not create user. A password hashing error has occurred.', 500);
+        return next(error)
+    }
 
     const registeredUser = new Users({
         name,
         email,
-        password,
+        password: hashedPassword,
         image: 'https://w7.pngwing.com/pngs/717/24/png-transparent-computer-icons-user-profile-user-account-avatar-heroes-silhouette-black-thumbnail.png',
         destinations: []
     });
@@ -70,7 +77,26 @@ export const registerUser = async (req, res, next) => {
         return next(error)
     }
 
-    res.status(201).json({user: registeredUser.toObject({ getterse: true })});
+    let token;
+    try {
+        token = jwt.sign({
+            userID: registeredUser.id,
+            email: registeredUser.email
+        },
+            'secret_secrets_are_no_fun', 
+            {expiresIn: '2h'}
+        );
+    } catch (err) {
+        const error = new HttpError("Something not-good happened. Couldn't register this user. Please try again.", 500);
+        return next(error)
+    }
+
+
+    res.status(201).json({
+        userID: registeredUser.id,
+        email: registeredUser.email,
+        token: token
+    });
 };
 
 export const loginUser = async (req, res, next) => {
@@ -84,25 +110,49 @@ export const loginUser = async (req, res, next) => {
         return next(error)
     }
 
-    if (!alreadyRegistered || alreadyRegistered.password !== password) {
+
+
+
+    if (!alreadyRegistered) {
         const error = new HttpError(
             'Invalid email address or password.', 401
         );
         return next(error)
     }
-  
-    // const foundUser = DUMMY_USERS.find(u => u.email === email);
-    // if (!foundUser || foundUser.password !== password) {
-    //   throw new HttpError('Email or password is incorrect.', 401);
-    // }
-        // Save for debugging.
 
+    let validPassword = false;
+    try {
+        validPassword = await bcrypt.compare(password, alreadyRegistered.password)
+    } catch (err) {
+        const error = new HttpError('Login failed. Please check your email address or password and try again.');
+        return next(error);
+    }
 
-  
-    res.json({message: 'Logged in!', 
+    if (!validPassword) {
+        const error = new HttpError(
+            'Invalid email address or password.', 401
+        );
+        return next(error)
+    }
+
+    let token;
+    try {
+        token = jwt.sign({
             userID: alreadyRegistered.id,
-            email: alreadyRegistered.email,
-            // alreadyRegistered.toObject({getters: true})
+            email: alreadyRegistered.email
+        },
+            'secret_secrets_are_no_fun', 
+            {expiresIn: '2h'}
+        );
+    } catch (err) {
+        const error = new HttpError("Something not-good happened. Couldn't login this user. Please try again.", 500);
+        return next(error)
+    }
+  
+    res.json({
+        userID: alreadyRegistered.id,
+        email: alreadyRegistered.email,
+        token: token
   });
 
 
@@ -111,7 +161,7 @@ export const loginUser = async (req, res, next) => {
 
 
 // import jwt from 'jsonwebtoken'
-// import bcrypt from 'bcryptjs'
+
 // import asyncHandler from 'express-async-handler'
 // import Users from '../models/users.js'
 
@@ -223,3 +273,11 @@ export const loginUser = async (req, res, next) => {
 //         password: 'testers'
 //     }
 // ]
+
+
+  
+    // const foundUser = DUMMY_USERS.find(u => u.email === email);
+    // if (!foundUser || foundUser.password !== password) {
+    //   throw new HttpError('Email or password is incorrect.', 401);
+    // }
+        // Save for debugging.
