@@ -2,16 +2,9 @@ import Users from '../models/users.js'
 import HttpError from '../models/http-error.js'
 import { validationResult } from 'express-validator'
 import { v4 as uuidv4 } from 'uuid'
+import mongoose from 'mongoose'
+import Destinations from '../models/destinations.js'
 
-
-// const  DUMMY_USERS = [
-//     {
-//         id: 'u1',
-//         name: 'Jason Aul',
-//         email: 'test@test.com',
-//         password: 'testers'
-//     }
-// ]
 
 
 export const userFinder = async (req, res, next) => {
@@ -36,7 +29,7 @@ export const registerUser = async (req, res, next) => {
     )}
     const { name, email, password } = req.body;
 
-    let alreadyRegistered
+    let alreadyRegistered;
     try {
         alreadyRegistered = await Users.findOne({ email: email })
     } catch (err) {
@@ -59,8 +52,7 @@ export const registerUser = async (req, res, next) => {
 
     
 
-    const registeredUser = new Users ({
-   
+    const registeredUser = new Users({
         name,
         email,
         password,
@@ -84,7 +76,7 @@ export const registerUser = async (req, res, next) => {
 export const loginUser = async (req, res, next) => {
     const { email, password } = req.body;
 
-    let alreadyRegistered
+    let alreadyRegistered;
     try {
         alreadyRegistered = await Users.findOne({ email: email })
     } catch (err) {
@@ -108,8 +100,9 @@ export const loginUser = async (req, res, next) => {
 
   
     res.json({message: 'Logged in!', 
-            user: 
-            alreadyRegistered.toObject({getters: true})
+            userID: alreadyRegistered.id,
+            email: alreadyRegistered.email,
+            // alreadyRegistered.toObject({getters: true})
   });
 
 
@@ -220,3 +213,13 @@ export const loginUser = async (req, res, next) => {
 // // module.exports = registerUser
 
 // export {registerUser, loginUser, getUser} 
+
+
+// const  DUMMY_USERS = [
+//     {
+//         id: 'u1',
+//         name: 'Jason Aul',
+//         email: 'test@test.com',
+//         password: 'testers'
+//     }
+// ]
