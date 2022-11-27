@@ -17,7 +17,7 @@ routerDestination.post('/register',
     check('email')
       .normalizeEmail() 
       .isEmail(),
-    check('password').isLength({ min: 6 })
+    check('password').isLength({ min: 7 })
   ], 
   registerUser); 
 

@@ -19,9 +19,7 @@ export const userFinder = async (req, res, next) => {
         //Saving in case needed for debugging.
     let users
     try {
-        users = await Users.find({
-
-        }, '-password')   
+        users = await Users.find({}, '-password')   
     } catch (err) {
         const error = new HttpError("Finding users failed. Please try again.", 500);
         return next (error)
@@ -109,9 +107,13 @@ export const loginUser = async (req, res, next) => {
 
 
   
-    res.json({message: 'Logged in!'});
-  };
+    res.json({message: 'Logged in!', 
+            user: 
+            alreadyRegistered.toObject({getters: true})
+  });
 
+
+}
 
 
 
@@ -217,4 +219,4 @@ export const loginUser = async (req, res, next) => {
 
 // // module.exports = registerUser
 
-// export {registerUser, loginUser, getUser}
+// export {registerUser, loginUser, getUser} 

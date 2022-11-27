@@ -14,7 +14,8 @@ routerDestination.get('/user/:userID', getDestByUser)
 
 routerDestination.get('/series/:series', getBySeries)
 
-routerDestination.post('/', [
+routerDestination.post('/', 
+[
     check('destinationName').not().isEmpty(),
     check('headline').isLength({min: 10}),
     check('game').not().isEmpty()
