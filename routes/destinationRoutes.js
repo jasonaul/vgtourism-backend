@@ -1,7 +1,7 @@
 import express from 'express';
 import {check} from 'express-validator'
 import { createDestination, getDestByID, getDestByUser, updateDestination, deleteDestination, getBySeries } from '../controllers/destinationController.js';
-import protect from '../middleware/authMiddleware.js'
+// import checkProtect from '../middleware/authMiddleware.js'
 // import {getDestinations, createDestination, updateDestination, deleteDestination} from '../controllers/destinationController.js'
 const app = express()
 
@@ -14,7 +14,7 @@ routerDestination.get('/user/:userID', getDestByUser)
 
 routerDestination.get('/series/:series', getBySeries)
 
-routerDestination.use(protect);
+// routerDestination.use(checkProtect);
 
 routerDestination.post('/',  
 [

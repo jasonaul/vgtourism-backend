@@ -39,9 +39,11 @@ const corsOptions = {
 
 
 const app = express();
-app.use(cors(corsOptions))
+// app.use(cors(corsOptions))
+app.use(cors("*"))
 
 app.use(bodyParser.json());
+app.use(express.urlencoded({extended: true}))
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -49,7 +51,7 @@ app.use((req, res, next) => {
       'Access-Control-Allow-Headers',
       'Origin, X-Requested-With, Content-Type, Accept, Authorization'
     );
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
   
     next();
 })

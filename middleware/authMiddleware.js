@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 import Users from '../models/users.js'
 import HttpError from '../models/http-error.js';
 
-const protect =  (req, res, next) => {
+const checkProtect =  (req, res, next) => {
     if (req.method === 'OPTIONS') {}
     try {
         const token = req.headers.authorization.split(' ')[1];
@@ -22,4 +22,4 @@ const protect =  (req, res, next) => {
 
 
 }
-export default protect
+export default checkProtect
