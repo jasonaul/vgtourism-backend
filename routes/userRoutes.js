@@ -3,7 +3,6 @@ import { check } from 'express-validator'
 import { userFinder, registerUser, loginUser } from '../controllers/userController.js';
 // import protect from '../middleware/authMiddleware.js'
 // import {getDestinations, createDestination, updateDestination, deleteDestination} from '../controllers/destinationController.js'
-const app = express()
 
 const routerDestination = express.Router();
 

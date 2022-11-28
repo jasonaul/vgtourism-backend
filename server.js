@@ -19,20 +19,20 @@ dotenv.config()
 
 import errorHandler from './middleware/errorMiddleware.js'
 
-const whitelist = ['http://localhost:3000', 'http://localhost:8080']
+// const whitelist = ['http://localhost:3000', 'http://localhost:5001']
 
-const corsOptions = {
-	origin: (origin, callback) => {
-		console.log(whitelist, "WHITELIST")
-		console.log(origin, "ORIGIN")
-		if (whitelist.indexOf(origin) !== -1 || !origin) {
-			callback(null, true);
-		} else {
-			callback(new Error('Not allowed by CORS'));
-		}
-	},
-	credentials: true,
-};
+// const corsOptions = {
+// 	origin: (origin, callback) => {
+// 		console.log(whitelist, "WHITELIST")
+// 		console.log(origin, "ORIGIN")
+// 		if (whitelist.indexOf(origin) !== -1 || !origin) {
+// 			callback(null, true);
+// 		} else {
+// 			callback(new Error('Not allowed by CORS'));
+// 		}
+// 	},
+// 	credentials: true,
+// };
 // const express = require('express')
 // const bodyParser = require('body-parser')
 
@@ -40,10 +40,10 @@ const corsOptions = {
 
 const app = express();
 // app.use(cors(corsOptions))
-app.use(cors("*"))
+// app.use(cors("*"))
 
 app.use(bodyParser.json());
-app.use(express.urlencoded({extended: true}))
+// app.use(express.urlencoded({extended: true}))
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -60,8 +60,10 @@ app.use('/api/destinations', routerDestination)
 app.use('/api/users', routerUser)
 
 app.use((req, res, next) => {
-    const error = new HttpError('You cannot progress any further.', 404);
+    const error = new HttpError('This route could not be found.', 404);
+    console.log(error)
     throw error;
+    
 });
 
 app.use((error, req, res, next) => {
@@ -76,7 +78,7 @@ app.use((error, req, res, next) => {
 mongoose
     .connect(process.env.MONGO_URI)
     .then(() => {
-        app.listen(8080);
+        app.listen(5001);
     })
     .catch(err => {
         console.log(err);
@@ -85,60 +87,4 @@ mongoose
 
 
 
-
-
-
-
-
-
-// connectDB()
-// //-----//
-
-
-// const app = express();
-
-// app.use(express.json())
-// app.use(express.urlencoded({extended: false}))
-
-// app.use('/api/destinations', router);
-//     // Every route within the posts routes will start with posts
-// app.use('/api/users', routerUser);
-
-// app.use(errorHandler)
-
-// // app.use(bodyParser.json({limit: "50mb", extended: true}));
-// // app.use(bodyParser.urlencoded({limit: "50mb", extended: true}));
-// // app.use(cors());
-
-// // const mongoose = require('mongoose');
-// // mongoose.connect(connectionStr);
-// // https://www.mongodb.com/cloud/atlas 
-
-// // const CONNECTION_URL = process.env.MONGODB_URI;
-
-// const CONNECTION_URL = 'mongodb+srv://jason:7!hc_VmXuJ2Q77@cluster0.qd4vsnj.mongodb.net/?retryWrites=true&w=majority'
-
-
-// // process.env.MONGODB_URI
-// const PORT = process.env.PORT ||  8080;
-
-
-// app.listen( PORT, () => {
-//     console.log("Server is listening on " + PORT )
-// })
-
-// // mongoose.connect(CONNECTION_URL, {useNewUrlParser: true, useUnifiedTopology: true})
-// //     .then(() => )
-// //     .catch(() => )
-
-// // mongoose.connect(CONNECTION_URL, {useNewUrlParser: true, useUnifiedTopology: true})
-// //     .then(() => app.listen([PORT, () => console.log(`Server running on port: ${PORT}`)]))
-// //     .catch((error) => console.log(error.message))
-
-// // set up listeners to monitor your database connection
-// // mongoose.connection.on('connected', ()=> console.log('DB connected...'));
-
-// // mongoose.connection.on('error', (err)=> console.log(err.message));
-
-// // mongoose.connection.on('disconnected', ()=> console.log('mongoose disconnected'));
 

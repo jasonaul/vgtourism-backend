@@ -24,7 +24,7 @@ const userSchema = mongoose.Schema({
     destinations: [{
         type: mongoose.Types.ObjectId,
         required: true,
-        ref: 'Destinations'
+        ref: 'Destination'
     }]
 
 
