@@ -3,6 +3,7 @@ import express, { application } from 'express';
 import bodyParser from 'body-parser';
 import HttpError from './models/http-error.js';
 
+
 //**  Middleware  **//
 import routerDestination from './routes/destinationRoutes.js'
 import routerUser from './routes/userRoutes.js';
@@ -18,16 +19,27 @@ dotenv.config()
 
 import errorHandler from './middleware/errorMiddleware.js'
 
+const whitelist = ['http://localhost:3000', 'http://localhost:8080']
 
-
-//Database Connections
-import connectDB from './config/db.js'
-
+const corsOptions = {
+	origin: (origin, callback) => {
+		console.log(whitelist, "WHITELIST")
+		console.log(origin, "ORIGIN")
+		if (whitelist.indexOf(origin) !== -1 || !origin) {
+			callback(null, true);
+		} else {
+			callback(new Error('Not allowed by CORS'));
+		}
+	},
+	credentials: true,
+};
 // const express = require('express')
 // const bodyParser = require('body-parser')
 
-const app = express();
 
+
+const app = express();
+app.use(cors(corsOptions))
 
 app.use(bodyParser.json());
 
@@ -37,7 +49,7 @@ app.use((req, res, next) => {
       'Access-Control-Allow-Headers',
       'Origin, X-Requested-With, Content-Type, Accept, Authorization'
     );
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
   
     next();
 })
@@ -54,7 +66,8 @@ app.use((error, req, res, next) => {
     if (res.headerSent) {
         return next(error);
     }
-    res.status(error.code || 500).json({message: error.message || "I am error."})
+    res.status(error.code || 500);
+    res.json({message: error.message || "I am error."})
 });
 
 

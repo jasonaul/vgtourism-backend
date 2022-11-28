@@ -7,7 +7,7 @@ const destinationsSchema = mongoose.Schema({
     },
     game: {
         type: String,
-        required: true
+        required: false
     },
     console: {
         type: String,
@@ -19,7 +19,7 @@ const destinationsSchema = mongoose.Schema({
     },
     destinationName: {
         type: String,
-        required: true
+        required: false
     },
     experience: {
         type: String,
@@ -27,7 +27,7 @@ const destinationsSchema = mongoose.Schema({
     },
     city: {
         type: String,
-        required: true
+        required: false
     },
     state: {
         type: String,
@@ -35,7 +35,7 @@ const destinationsSchema = mongoose.Schema({
     },
     country: {
         type: String,
-        required: true
+        required: false
     },
     continent: {
         type: String,

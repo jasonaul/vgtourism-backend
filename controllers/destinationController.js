@@ -17,11 +17,6 @@ export const getDestByID = async (req, res, next) => {
 
         return next(error);
     }
-    
-    // DUMMY_DESTINATIONS.find(d => {
-    //     return d.id === destID;
-    // });
-        //Use above for any dev purpose
 
     if (!destination) {
         const error = new HttpError('I am error.', 404);
@@ -43,12 +38,6 @@ export const getDestByUser = async (req, res, next) => {
         const error = new HttpError("Cannot find the user/destination you are looking for.", 500);
         return next(error)
     }
-    
-    // DUMMY_DESTINATIONS.filter(d => {
-    //     return d.creator === userID;
-    // });
-        //Use for dev purposes.
-
 
 
     if (!aUsersDestinations ){
@@ -93,7 +82,7 @@ export const createDestination = async (req, res, next) => {
         ) 
     }
 
-    const { destinationName, experience, series, game, console, releaseyear, city, state, country, continent, coordinates,  headline, description1, description2, description3, image1, image2, image3, ingameimg1, ingameimg2, ingameimg3, creator } = req.body;
+    const { destinationName, experience, series, game, console, releaseyear, city, state, country, continent, coordinates, headline, description1, description2, description3, image1, image2, image3, ingameimg1, ingameimg2, ingameimg3 } = req.body;
 
     const createdDestination = new Destinations ({
         destinationName,
@@ -117,12 +106,12 @@ export const createDestination = async (req, res, next) => {
         ingameimg1, 
         ingameimg2,
         ingameimg3,
-        creator
+        creator: req.userData.userID
     });
 
     let user;
     try {
-        user = await Users.findById(creator);
+        user = await Users.findById(req.userData.userID);
     } catch (err) {
         const error = new HttpError("Creating a destination failed. Please try again.", 500);
         return next(error)
@@ -181,6 +170,12 @@ try {
     const error = new HttpError("Updating went haywire. Please try again.", 500);
     return next(error);
     
+}
+
+if (destination.creator.toString() != req.userData.userID) {
+    const error = new HttpError("Only the user who created this destination may edit itt or delete it.",
+    401);
+    return next(error)
 }
 
 

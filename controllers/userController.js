@@ -62,8 +62,8 @@ export const registerUser = async (req, res, next) => {
     const registeredUser = new Users({
         name,
         email,
-        password: hashedPassword,
         image: 'https://w7.pngwing.com/pngs/717/24/png-transparent-computer-icons-user-profile-user-account-avatar-heroes-silhouette-black-thumbnail.png',
+        password: hashedPassword,
         destinations: []
     });
 
@@ -97,6 +97,8 @@ export const registerUser = async (req, res, next) => {
         email: registeredUser.email,
         token: token
     });
+
+    console.log(registeredUser.id, registeredUser.email)
 };
 
 export const loginUser = async (req, res, next) => {
@@ -154,8 +156,7 @@ export const loginUser = async (req, res, next) => {
         email: alreadyRegistered.email,
         token: token
   });
-
-
+    
 }
 
 
