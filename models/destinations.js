@@ -59,7 +59,7 @@ const destinationsSchema = mongoose.Schema({
         type: Number,
         required: false
     },
-    externalSite: {
+    externalsite: {
         type: String,
         required: false
     },

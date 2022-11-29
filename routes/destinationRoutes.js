@@ -1,5 +1,5 @@
 import express from 'express';
-import {check} from 'express-validator'
+import { check } from 'express-validator'
 import { createDestination, getDestByID, getDestByUser, updateDestination, deleteDestination } from '../controllers/destinationController.js';
 import checkProtect from '../middleware/authMiddleware.js'
 // import {getDestinations, createDestination, updateDestination, deleteDestination} from '../controllers/destinationController.js'
@@ -10,19 +10,19 @@ const routerDestination = express.Router();
 
 routerDestination.get('/:destID', getDestByID);
 
-routerDestination.get('/user/:userID', getDestByUser) 
+routerDestination.get('/user/:userID', getDestByUser)
 
 // routerDestination.get('/series/:series', getBySeries)
 
 routerDestination.use(checkProtect);
 
-routerDestination.post('/',  
-[
-    check('destinationName').not().isEmpty(),
-    check('headline').isLength({min: 10}),
-    check('game').not().isEmpty()
+routerDestination.post('/',
+    [
+        check('destinationName').not().isEmpty(),
+        check('headline').isLength({ min: 10 }),
+        check('game').not().isEmpty()
     ], createDestination
-    )
+)
 
 // routerDestination.route('/new').post(function(req, res) {
 //     let dest = new Destinations(req.body);
@@ -37,11 +37,11 @@ routerDestination.post('/',
 
 routerDestination.patch('/:destID', [
     check('destinationName').not().isEmpty(),
-    check('headline').isLength({min: 10}),
+    check('headline').isLength({ min: 10 }),
     check('game').not().isEmpty()
-    ],  updateDestination ); 
+], updateDestination);
 
-routerDestination.delete('/:destID', deleteDestination ); 
+routerDestination.delete('/:destID', deleteDestination);
 
 // routerDestination.get('/gameseries/mario'), (req, res, next) => {
 //     const mario = req.params.series;

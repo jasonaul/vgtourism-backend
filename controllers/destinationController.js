@@ -103,9 +103,11 @@ export const getDestByID = async (req, res, next) => {
 
 export const createDestination = async (req, res, next) => {
     const errors = validationResult(req);
+    console.log('api destination ===', req.body);
     if (!errors.isEmpty()) {
       return next(
-        new HttpError('Something went wrong with your inputs and/or connection, please try again.', 422)
+        new HttpError('Something went wrong with your inputs and/or connection, please try again.', console.log(HttpError), 422)
+        
       );
     }
 
@@ -115,26 +117,26 @@ export const createDestination = async (req, res, next) => {
 
     const createdDestination = new Destinations({
         destinationName,
-        experience,
+        // experience,
         series, 
         game,
-        console,
-        coordinates,
-        releaseyear,
+        // console,
+        // coordinates,
+        // releaseyear,
         city,
-        state,
+        // state,
         country,
-        continent,
+        // continent,
         headline,
-        description1,
-        description2,
-        description3,
-        image1,
-        image2,
-        image3,
-        ingameimg1, 
-        ingameimg2,
-        ingameimg3,
+        // description1,
+        // description2,
+        // description3,
+        // image1,
+        // image2,
+        // image3,
+        // ingameimg1, 
+        // ingameimg2,
+        // ingameimg3,
         creator: req.userData.userID
     });
 

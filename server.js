@@ -11,10 +11,13 @@ import routerUser from './routes/userRoutes.js';
 import mongoose from 'mongoose';
 
 import dotenv from 'dotenv';
+import { body } from 'express-validator';
 dotenv.config()
 
 const app = express();
 
+
+app.use(bodyParser.urlencoded( {extended: true}))
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
