@@ -1,10 +1,11 @@
 import jwt from 'jsonwebtoken'
 // import asyncHandler from 'express-async-handler'
-import Users from '../models/users.js'
 import HttpError from '../models/http-error.js';
 
 const checkProtect =  (req, res, next) => {
-    if (req.method === 'OPTIONS') {}
+    if (req.method === 'OPTIONS') {
+        return next();
+    }
     try {
         const token = req.headers.authorization.split(' ')[1];
         if (!token) {

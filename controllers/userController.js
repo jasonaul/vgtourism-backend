@@ -17,7 +17,7 @@ export const userFinder = async (req, res, next) => {
         users = await Users.find({}, '-password')   
     } catch (err) {
         const error = new HttpError("Finding users failed. Please try again.", 500);
-        return next (error)
+        return next(error)
     }
     res.json({users: users.map(user => user.toObject({getters:true})
         )})

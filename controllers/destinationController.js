@@ -6,67 +6,106 @@ import Users from '../models/users.js'
 import mongoose from 'mongoose'
 
 
+
 export const getDestByID = async (req, res, next) => {
-    const destID = req.params.destID;
-    let destination;
+    const destinationID = req.params.destID;
+  
+    let oneDestination;
     try {
-        destination = await Destinations.findById(destID);
-
+      oneDestination = await Destinations.findById(destinationID);
     } catch (err) {
-        const error = new HttpError("Hmm, we couldn't find the destination you are looking for. Try again!", 500);
-
-        return next(error);
+      const error = new HttpError(
+        'Something went wrong, could not find a place.',
+        500
+      );
+      return next(error);
     }
-
-    if (!destination) {
-        const error = new HttpError('I am error.', 404);
-        return next(error)
-         }
-
-    res.json({destination: destination.toObject( {getters: true} ) })
-}
-
-export const getDestByUser = async (req, res, next) => {
-    const userID = req.params.userID;
-    // let destinations
-    let aUsersDestinations;
+  
+    if (!oneDestination) {
+      const error = new HttpError(
+        'Could not find place for the provided id.',
+        404
+      );
+      return next(error);
+    }
+  
+    res.json({ destination: oneDestination.toObject({ getters: true }) });
+  };
+  
+  export const getDestByUser = async (req, res, next) => {
+    const oneUserID = req.params.userID;
+  
+    // let places;
+    let usersDestinations;
     try {
-         aUsersDestinations = await Users.findById(userID).populate('destinations') 
+        usersDestinations = await Users.findById(oneUserID).populate('destinations');
     } catch (err) {
-        const error = new HttpError("Cannot find the user/destination you are looking for.", 500);
-        return next(error)
+      const error = new HttpError(
+        'Fetching places failed, please try again later.',
+        500
+      );
+      return next(error);
     }
-    if (!aUsersDestinations || aUsersDestinations.destinations.length === 0 ){
-        return next(
-            new HttpError('I am error...userID', 404)
-       
-       )
+  
+    // if (!places || places.length === 0) {
+    if (!usersDestinations || usersDestinations.destinations.length === 0) {
+      return next(
+        new HttpError('Could not find destinations for the provided user id.', 404)
+      );
     }
-
-    res.json({destinations: aUsersDestinations.destinations.map(destination => destination.toObject({getters:true}))})
-}
-
-export const getBySeries = (req, res, next) => {
-    const series = req.params.series;
-    const gameSeries = Destinations.filter(d => {
-        return d.series === series;
+  
+    res.json({
+      places: usersDestinations.destinations.map(place =>
+        place.toObject({ getters: true })
+      )
     });
+  };
 
-    if (!gameSeries || gameSeries.length === 0){
-        
-        return next(
-            new HttpError('I am error...userID', 404)
+// export const getDestByID = async (req, res, next) => {
+//     const destID = req.params.did;
+    
+//     let destination;
+//     try {
+//         destination = await Destinations.findById(destID);
+//     } catch (err) {
+//         const error = new HttpError("Hmm, we couldn't find the destination you are looking for. Try again!", 500);
+
+//         return next(error);
+//     }
+
+//     if (!destination) {
+//         const error = new HttpError('No destination for the provided ID', 404);
+//         return next(error)
+//          }
+
+//     res.json({destination: destination.toObject( {getters: true} ) })
+// }
+
+// export const getDestByUser = async (req, res, next) => {
+//     const userID = req.params.userID;
+//     // let destinations
+//     let aUsersDestinations;
+//     try {
+//          aUsersDestinations = await Users.findById(userID).populate('destinations') 
+//     } catch (err) {
+//         const error = new HttpError("Cannot find the user/destination you are looking for.", 500);
+//         return next(error)
+//     }
+//     if (!aUsersDestinations || aUsersDestinations.destinations.length === 0 ){
+//         return next(
+//             new HttpError('I am error...userID', 404)
        
-       )
-    }
-    res.json({gameSeries})
-}
+//        )
+//     }
+//     res.json({destinations: aUsersDestinations.destinations.map(destination => destination.toObject({getters:true}))})
+// }
+
 
 export const createDestination = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return next(
-        new HttpError('Invalid inputs passed, please check your data.', 422)
+        new HttpError('Something went wrong with your inputs and/or connection, please try again.', 422)
       );
     }
 
@@ -114,12 +153,12 @@ export const createDestination = async (req, res, next) => {
 
 
     try {
-        const currentSession = await mongoose.startSession();
-        currentSession.startTransaction();
-        await createdDestination.save({ session: currentSession });
+        const sess = await mongoose.startSession();
+        sess.startTransaction();
+        await createdDestination.save({ session: sess });
         user.destinations.push(createdDestination);
-        await user.save({ session: currentSession });
-        await currentSession.commitTransaction();
+        await user.save({ session: sess });
+        await sess.commitTransaction();
 
       } catch (err) {
           const error = new HttpError(
@@ -140,12 +179,13 @@ export const createDestination = async (req, res, next) => {
 export const updateDestination = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return next (
-            new HttpError('Several fields required for you to update. Please check your data.', 422)
-        ) 
+      return next(
+        new HttpError('Invalid inputs passed, please check your data.', 422)
+      );
     }
+  
 
-  const { destinationName, headline, game} = req.body;
+  const { destinationName, headline } = req.body;
   const destID = req.params.destID
 
 //   const destID = req.params.destID
@@ -171,7 +211,6 @@ if (destination.creator.toString() != req.userData.userID) {
 
 destination.destinationName = destinationName;
 destination.headline = headline;
-destination.game = game;
 
 try {
     await destination.save();
@@ -219,6 +258,30 @@ export const deleteDestination = async (req, res, next) => {
 
     res.status(200).json({message: 'Destination Deleted!'})
 };
+
+
+// ** For Future Use ** //
+
+
+// export const getBySeries = (req, res, next) => {
+//     const series = req.params.series;
+//     const gameSeries = Destinations.filter(d => {
+//         return d.series === series;
+//     });
+
+//     if (!gameSeries || gameSeries.length === 0){
+        
+//         return next(
+//             new HttpError('I am error...userID', 404)
+       
+//        )
+//     }
+//     res.json({gameSeries})
+// }
+
+
+
+// ** For Future Use ** //
 
 
 // import asyncHandler from 'express-async-handler'
