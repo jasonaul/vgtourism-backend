@@ -29,7 +29,7 @@ export const registerUser = async (req, res, next) => {
         return next(
          new HttpError("You must use a name (of your preference), an email address, and a password (minimum 7 characters).", 422)
     )}
-    const { name, email, password } = req.body;
+    const { name, email, image, password } = req.body;
 
     let alreadyRegistered;
     try {
@@ -62,7 +62,7 @@ export const registerUser = async (req, res, next) => {
     const registeredUser = new Users({
         name,
         email,
-        image: 'https://w7.pngwing.com/pngs/717/24/png-transparent-computer-icons-user-profile-user-account-avatar-heroes-silhouette-black-thumbnail.png',
+        image,
         password: hashedPassword,
         destinations: []
     });

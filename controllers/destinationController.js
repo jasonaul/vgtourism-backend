@@ -48,12 +48,15 @@ export const getDestByID = async (req, res, next) => {
     }
   
     // if (!places || places.length === 0) {
-    if (!usersDestinations || usersDestinations.destinations.length === 0) {
+    if (!usersDestinations ) {
       return next(
         new HttpError('Could not find destinations for the provided user id.', 404)
       );
     }
   
+// || usersDestinations.destinations.length === 0
+      // I removed this from the above "if (!userDestinations || usersDestinations.destinations.length === 0) because it was causing issues. Keeping it here in case it is needed again. "
+
     res.json({
       places: usersDestinations.destinations.map(place =>
         place.toObject({ getters: true })
@@ -113,7 +116,7 @@ export const createDestination = async (req, res, next) => {
 
     // const { destinationName, experience, series, game, console, releaseyear, city, state, country, continent, coordinates, headline, description1, description2, description3, image1, image2, image3, ingameimg1, ingameimg2, ingameimg3 } = req.body;
 
-    const { destinationName, series, game, city, country, headline } = req.body;
+    const { destinationName, series, game, city, country, headline, description1, description2, description3, image1, image2, ingameimg1, ingameimg2  } = req.body;
 
     const createdDestination = new Destinations({
         destinationName,
@@ -128,14 +131,14 @@ export const createDestination = async (req, res, next) => {
         country,
         // continent,
         headline,
-        // description1,
-        // description2,
-        // description3,
-        // image1,
-        // image2,
+        description1,
+        description2,
+        description3,
+        image1,
+        image2,
         // image3,
-        // ingameimg1, 
-        // ingameimg2,
+        ingameimg1, 
+        ingameimg2,
         // ingameimg3,
         creator: req.userData.userID
     });

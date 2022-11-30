@@ -20,7 +20,7 @@ routerDestination.post('/',
     [
         check('destinationName').not().isEmpty(),
         check('headline').isLength({ min: 10 }),
-        check('game').not().isEmpty()
+        // check('game').not().isEmpty()
     ], createDestination
 )
 
