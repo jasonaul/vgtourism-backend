@@ -1,2 +1,2 @@
 # vgtourism-backend
-That real real.
+The backend component of VGTourism. 
